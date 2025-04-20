@@ -1,99 +1,201 @@
 <!doctype html>
 <html lang="en">
 <head>
-<title>Your Project Name</title>
-<meta property="og:title" content=Your Project Name" />
-<meta name="twitter:title" content="Your Project Name" />
-<meta name="description" content="Your project about your cool topic described right here." />
-<meta property="og:description" content="Your project about your cool topic described right here." />
-<meta name="twitter:description" content="Your project about your cool topic described right here." />
-<meta property="og:type" content="website" />
-<meta name="twitter:card" content="summary" /> 
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<!-- bootstrap for mobile-friendly layout -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
-<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
-<link href="style.css" rel="stylesheet">
+  <meta charset="utf-8">
+  <title>Enhancing Image Classification with Model Distillation</title>
+  <meta property="og:title" content="Enhancing Image Classification with Model Distillation" />
+  <meta name="twitter:title" content="Enhancing Image Classification with Model Distillation" />
+  <meta name="description" content="A specialist–generalist approach on CIFAR‑10 using model distillation." />
+  <meta property="og:description" content="A specialist–generalist approach on CIFAR‑10 using model distillation." />
+  <meta name="twitter:description" content="A specialist–generalist approach on CIFAR‑10 using model distillation." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary" /> 
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
 
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700&display=swap" rel="stylesheet">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+        integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N"
+        crossorigin="anonymous">
+  <!-- Custom Styles -->
+  <link href="style.css" rel="stylesheet">
 </head>
-<body class="nd-docs">
-<div class="nd-pageheader">
- <div class="container">
- <h1 class="lead">
- <nobr class="widenobr">Your Project Name</nobr>
- <nobr class="widenobr">For CS 7150</nobr>
- </h1>
- </div>
-</div><!-- end nd-pageheader -->
+<body>
 
-<div class="container">
-<div class="row">
-<div class="col justify-content-center text-center">
-<h2>An Analysis of [papername]</h2>
-<p>Describe the paper and the big question about it that interests you.</p>
-</div>
-</div>
-<div class="row">
-<div class="col">
-
-<h2>Related Work; Methods; Link to Code; Experiments; Disucssion</h2>
-
-<p>
-Scoring for your final project writeup rubric will be as follows:
-<br>
-+1: You have a good title and have identified the project team members as authors.
-<br>
-+1: Introduction poses the question
-<br>
-+1: Related work section properly cites and links and says a couple words about the paper(s) on which the work is based, and how your work relates.
-<br>
-+1: The methods you are using are described briefly and precisely.
-<br>
-+1: The aspects that distinguish your study from previous work are described clearly (e.g. what is your particular focus)
-<br>
-+1: Your analysis is solid, and you use diagrams effectively to show your main methods or results visually.
-<br>
-+1: You have created some code (e.g., link to github), demonstrating the methods.
-<br>
-+1: You include a discussion with your own opinions, questions, or perspective on your findings.
-</p>
-<h3>References</h3>
-
-<p><a name="bottou-1990">[1]</a> <a href="https://papers.baulab.info/Bottou-1990.pdf"
-  >L&eacute;on Bottou and Patrick Gallinari.
-  <em>A framework for the cooperation of learning algorithms.</em></a>
-  Advances in neural information processing systems 3 (1990).
-</p>
-
-<h2>Team Members</h2>
-                                                   
-<p>Make sure to list here is who is on the team.</p>
-
-  
-</div><!--col-->
-</div><!--row -->
-</div> <!-- container -->
-
-<footer class="nd-pagefooter">
-  <div class="row">
-    <div class="col-6 col-md text-center">
-      <a href="https://cs7150.baulab.info/">About CS 7150</a>
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">Model Distillation Blog</a>
+      <button class="navbar-toggler" type="button"
+              data-toggle="collapse" data-target="#navbarNav"
+              aria-controls="navbarNav" aria-expanded="false"
+              aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link" href="#introduction">Introduction</a></li>
+          <li class="nav-item"><a class="nav-link" href="#distillation">Distillation</a></li>
+          <li class="nav-item"><a class="nav-link" href="#ensemble">Ensemble Strategy</a></li>
+          <li class="nav-item"><a class="nav-link" href="#experiments">Experiments</a></li>
+          <li class="nav-item"><a class="nav-link" href="#discussion">Discussion</a></li>
+          <li class="nav-item"><a class="nav-link" href="#team">Team & Code</a></li>
+        </ul>
+      </div>
     </div>
-  </div>
-</footer>
+  </nav>
 
+  <!-- HERO / JUMBOTRON -->
+  <header class="hero text-light text-center d-flex align-items-center">
+    <div class="container">
+      <h1 class="display-4 font-weight-bold">Enhancing Image Classification</h1>
+      <p class="lead mt-3">with Model Distillation: A Specialist–Generalist Approach on CIFAR‑10</p>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main class="mt-5 pt-5">
+    <div class="container">
+
+      <!-- Introduction -->
+      <section id="introduction" class="my-5">
+        <h2 class="section-title">Introduction</h2>
+        <p>Recent advancements in neural networks have dramatically increased the performance of image classification systems. However, deploying large models in real-world applications remains challenging due to computational limitations. Geoffrey Hinton and colleagues proposed <strong>model distillation</strong>, a technique to compress the knowledge of large neural networks or ensembles into smaller models without significantly sacrificing performance.</p>
+      </section>
+
+      <!-- Distillation -->
+      <section id="distillation" class="my-5">
+        <h2 class="section-title">What is Model Distillation?</h2>
+        <p>Model distillation is the process of transferring knowledge from a <em>cumbersome</em> model (a large net or an ensemble) into a smaller, deployment‑friendly model. Instead of training on hard labels alone, the small model learns from the <strong>soft targets</strong>—the full output probability distribution—produced by the cumbersome model. These soft targets encode class similarities and subtle generalization patterns that hard labels cannot.</p>
+        <p>For example, a large model might assign an image of a BMW a tiny probability of being a “garbage truck” and an even tinier one of being a “carrot.” Those relative probabilities teach the small model which mistakes are more “reasonable,” boosting its accuracy on unseen data.</p>
+      </section>
+
+      <!-- Ensemble Strategy -->
+      <section id="ensemble" class="my-5">
+        <h2 class="section-title">Generalist and Specialist Models</h2>
+        <p>To squeeze every last drop of accuracy, we combine:</p>
+        <ul>
+          <li><strong>Generalist Model:</strong> A ResNet‑34 trained on all 10 CIFAR classes.</li>
+          <li><strong>Specialist Models:</strong> Two ResNet‑18s, each focused on a subset:</li>
+          <ul>
+            <li><em>Animals:</em> bird, cat, deer, dog, frog, horse</li>
+            <li><em>Vehicles:</em> plane, car, ship, truck</li>
+          </ul>
+        </ul>
+        <p>Specialists excel at distinguishing within their narrow domain. At inference, we run the generalist first to pick top candidates, then activate only the relevant specialist(s), and finally fuse their predictions.</p>
+      </section>
+
+      <!-- Experiments -->
+      <section id="experiments" class="my-5">
+        <h2 class="section-title">Experimental Results and Analysis</h2>
+        <p>After training these three models, we distilled their ensemble knowledge into a single small network. Below are our key findings on CIFAR‑10:</p>
+
+        <h3>Per‐Class Accuracy Improvement</h3>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Class</th>
+              <th>Generalist (%)</th>
+              <th>Ensemble w/ Specialists (%)</th>
+              <th>Δ (%)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>plane</td><td>83.30</td><td>82.00</td><td>−1.30</td></tr>
+            <tr><td>car</td><td>91.30</td><td>90.50</td><td>−0.80</td></tr>
+            <tr><td>bird</td><td>72.60</td><td>76.10</td><td>+3.50</td></tr>
+            <tr><td>cat</td><td>64.80</td><td>67.40</td><td>+2.60</td></tr>
+            <tr><td>deer</td><td>79.50</td><td>83.40</td><td>+3.90</td></tr>
+            <tr><td>dog</td><td>72.70</td><td>77.20</td><td>+4.50</td></tr>
+            <tr><td>frog</td><td>85.50</td><td>89.50</td><td>+4.00</td></tr>
+            <tr><td>horse</td><td>85.90</td><td>88.00</td><td>+2.10</td></tr>
+            <tr><td>ship</td><td>89.50</td><td>91.80</td><td>+2.30</td></tr>
+            <tr><td>truck</td><td>87.90</td><td>89.00</td><td>+1.10</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Overall Performance</h3>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>Accuracy (%)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Generalist (ResNet-34)</td><td>81.30</td></tr>
+            <tr><td>Specialist 1 (Animals, ResNet-18)</td><td>82.37</td></tr>
+            <tr><td>Specialist 2 (Vehicles, ResNet-18)</td><td>91.35</td></tr>
+            <tr><td><strong>Distilled Ensemble</strong></td><td><strong>83.49</strong></td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Discussion & Conclusion -->
+      <section id="discussion" class="my-5">
+        <h2 class="section-title">Why Does Distillation Work?</h2>
+        <p>By training on <em>soft targets</em>—the full output distribution at a raised softmax temperature—the small model inherits the large model’s generalization patterns. It learns which mistakes are more “reasonable,” and this extra signal greatly reduces overfitting compared to hard‐label training alone.</p>
+
+        <h2 class="section-title">Insights & Future Work</h2>
+        <ul>
+          <li>Our specialist–generalist ensemble boosts per‐class accuracy, especially on confusing animal classes.</li>
+          <li>Future directions include experimenting with different specialist subsets, tuning distillation temperatures, and scaling to larger datasets like ImageNet.</li>
+        </ul>
+
+        <h2 class="section-title">Conclusion</h2>
+        <p>Combining specialist models with distillation yields a compact, high‐accuracy network suitable for deployment in resource‐constrained environments—bridging the gap between research‐grade ensembles and real‐world applications.</p>
+      </section>
+
+      <!-- References -->
+      <section id="references" class="my-5">
+        <h2 class="section-title">References</h2>
+        <ul class="list-unstyled">
+          <li>
+            [1] <a href="https://arxiv.org/abs/1503.02531" target="_blank" rel="noopener noreferrer">
+              Geoffrey Hinton <em>et al.</em>, “Distilling the Knowledge in a Neural Network,” arXiv:1503.02531 (2015)
+            </a>
+          </li>
+        </ul>
+      </section>
+      
+
+      <!-- Team & Code -->
+      <section id="team" class="my-5">
+        <h2 class="section-title">Team & Code</h2>
+        <p><strong>Authors:</strong> Rohan Bhatane, Ayaazuddin Mohammad</p>
+        <p><strong>GitHub:</strong> <a href="https://github.com/dummy_link" target="_blank">github.com/dummy_link</a></p>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer bg-primary text-light py-4">
+    <div class="container text-center">
+      <a href="https://cs7150.baulab.info/" class="text-light">About CS 7150</a>
+    </div>
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+          integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+          crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
+          crossorigin="anonymous"></script>
+  <script>
+    // click-to-select helper
+    $(document).on('click', '.clickselect', function() {
+      var range = document.createRange();
+      range.selectNodeContents(this);
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    });
+    // Google Analytics placeholder
+    window.dataLayer = window.dataLayer || [];
+  </script>
 </body>
-<script>
-$(document).on('click', '.clickselect', function(ev) {
-  var range = document.createRange();
-  range.selectNodeContents(this);
-  var sel = window.getSelection();
-  sel.removeAllRanges();
-  sel.addRange(range);
-});
-// Google analytics below.
-window.dataLayer = window.dataLayer || [];
-</script>
 </html>
