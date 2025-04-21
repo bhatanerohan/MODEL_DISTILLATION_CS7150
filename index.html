@@ -3,24 +3,29 @@
 <head>
   <meta charset="utf-8">
   <title>Enhancing Image Classification with Model Distillation</title>
-  <meta property="og:title" content="Enhancing Image Classification with Model Distillation" />
-  <meta name="twitter:title" content="Enhancing Image Classification with Model Distillation" />
-  <meta name="description" content="A specialist–generalist approach on CIFAR‑10 using model distillation." />
-  <meta property="og:description" content="A specialist–generalist approach on CIFAR‑10 using model distillation." />
-  <meta name="twitter:description" content="A specialist–generalist approach on CIFAR‑10 using model distillation." />
+
+  <!-- Social‑metadata -->
+  <meta property="og:title"         content="Enhancing Image Classification with Model Distillation" />
+  <meta name="twitter:title"        content="Enhancing Image Classification with Model Distillation" />
+  <meta name="description"          content="A specialist–generalist approach on CIFAR‑10 using model distillation." />
+  <meta property="og:description"   content="A specialist–generalist approach on CIFAR‑10 using model distillation." />
+  <meta name="twitter:description"  content="A specialist–generalist approach on CIFAR‑10 using model distillation." />
   <meta property="og:type" content="website" />
-  <meta name="twitter:card" content="summary" /> 
+  <meta name="twitter:card" content="summary" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-  <!-- Google Fonts -->
+  <!-- Google Fonts & Bootstrap -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700&display=swap" rel="stylesheet">
-  <!-- Bootstrap CSS -->
   <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
         integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N"
         crossorigin="anonymous">
-  <!-- Custom Styles -->
+
+  <!-- Custom styles -->
   <link href="style.css" rel="stylesheet">
+
+  <!-- MathJax for equations -->
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
 
@@ -28,26 +33,26 @@
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
     <div class="container">
       <a class="navbar-brand" href="#">Model Distillation Blog</a>
-      <button class="navbar-toggler" type="button"
-              data-toggle="collapse" data-target="#navbarNav"
-              aria-controls="navbarNav" aria-expanded="false"
-              aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" data-toggle="collapse"
+              data-target="#navbarNav" aria-controls="navbarNav"
+              aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
         <ul class="navbar-nav">
           <li class="nav-item"><a class="nav-link" href="#introduction">Introduction</a></li>
           <li class="nav-item"><a class="nav-link" href="#distillation">Distillation</a></li>
-          <li class="nav-item"><a class="nav-link" href="#ensemble">Ensemble Strategy</a></li>
+          <li class="nav-item"><a class="nav-link" href="#ensemble">Ensemble Strategy</a></li>
           <li class="nav-item"><a class="nav-link" href="#experiments">Experiments</a></li>
+          <li class="nav-item"><a class="nav-link" href="#math">Math Deep‑Dive</a></li>
           <li class="nav-item"><a class="nav-link" href="#discussion">Discussion</a></li>
-          <li class="nav-item"><a class="nav-link" href="#team">Team & Code</a></li>
+          <li class="nav-item"><a class="nav-link" href="#team">Team & Code</a></li>
         </ul>
       </div>
     </div>
   </nav>
 
-  <!-- HERO / JUMBOTRON -->
+  <!-- HERO -->
   <header class="hero text-light text-center d-flex align-items-center">
     <div class="container">
       <h1 class="display-4 font-weight-bold">Enhancing Image Classification</h1>
@@ -62,45 +67,60 @@
       <!-- Introduction -->
       <section id="introduction" class="my-5">
         <h2 class="section-title">Introduction</h2>
-        <p>Recent advancements in neural networks have dramatically increased the performance of image classification systems. However, deploying large models in real-world applications remains challenging due to computational limitations. Geoffrey Hinton and colleagues proposed <strong>model distillation</strong>, a technique to compress the knowledge of large neural networks or ensembles into smaller models without significantly sacrificing performance.</p>
+        <p>Recent advancements in neural networks have dramatically increased the performance of image‑classification systems. However, deploying large models in real‑world applications remains challenging due to tight latency and memory budgets. Geoffrey Hinton and his colleagues proposed <strong>model distillation</strong>, a method that transfers the knowledge of a large or ensemble model into a much smaller network with minimal loss in accuracy. In this article we explore how distillation works and how combining <em>specialist</em> and <em>generalist</em> models further boosts accuracy on the CIFAR‑10 dataset.</p>
       </section>
 
       <!-- Distillation -->
       <section id="distillation" class="my-5">
-        <h2 class="section-title">What is Model Distillation?</h2>
-        <p>Model distillation is the process of transferring knowledge from a <em>cumbersome</em> model (a large net or an ensemble) into a smaller, deployment‑friendly model. Instead of training on hard labels alone, the small model learns from the <strong>soft targets</strong>—the full output probability distribution—produced by the cumbersome model. These soft targets encode class similarities and subtle generalization patterns that hard labels cannot.</p>
-        <p>For example, a large model might assign an image of a BMW a tiny probability of being a “garbage truck” and an even tinier one of being a “carrot.” Those relative probabilities teach the small model which mistakes are more “reasonable,” boosting its accuracy on unseen data.</p>
+        <h2 class="section-title">What is Model Distillation?</h2>
+        <p>Model distillation transfers knowledge from a <em>cumbersome</em> model—often an ensemble—into a lightweight student. Rather than learning solely from hard, one‑hot labels, the student learns from the teacher’s <strong>soft targets</strong>: the entire probability vector output by a higher‑temperature soft‑max. These probabilities embed rich information about inter‑class similarity.</p>
+        <p>For example, the teacher might classify an image as “cat” with 60 % confidence, “dog” with 35 %, and only 0.1 % for “truck.” Those relative values show the student that cats and dogs share visual traits, which is precisely the nuance that improves generalisation.</p>
+           <figure class="my-4 text-center">
+            <img src="Picture2.png"
+                   alt="Overview of the model distillation process"
+                  class="img-fluid w-50">
+                <figcaption>Figure 3 – Overview of the distillation process.</figcaption>
+             </figure>
       </section>
 
       <!-- Ensemble Strategy -->
       <section id="ensemble" class="my-5">
-        <h2 class="section-title">Generalist and Specialist Models</h2>
-        <p>To squeeze every last drop of accuracy, we combine:</p>
-        <ul>
-          <li><strong>Generalist Model:</strong> A ResNet‑34 trained on all 10 CIFAR classes.</li>
-          <li><strong>Specialist Models:</strong> Two ResNet‑18s, each focused on a subset:</li>
-          <ul>
-            <li><em>Animals:</em> bird, cat, deer, dog, frog, horse</li>
-            <li><em>Vehicles:</em> plane, car, ship, truck</li>
-          </ul>
-        </ul>
-        <p>Specialists excel at distinguishing within their narrow domain. At inference, we run the generalist first to pick top candidates, then activate only the relevant specialist(s), and finally fuse their predictions.</p>
-      </section>
+        <h2 class="section-title">Generalist and Specialist Models</h2>
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                      <p>Ensembles squeeze out extra accuracy. Ours contains:</p>
+                      <ul>
+                        <li><strong>Generalist Model</strong> — ResNet‑34 trained on all 10 CIFAR‑10 classes.</li>
+                        <li><strong>Specialist Models</strong> — Two ResNet‑18 networks, each fine‑tuned on a subset:</li>
+                        <ul>
+                          <li><em>Animals:</em> bird, cat, deer, dog, frog, horse</li>
+                          <li><em>Vehicles:</em> plane, car, ship, truck</li>
+                        </ul>
+                      </ul>
+                      <p>At inference time the pipeline is:</p>
+                      <ol>
+                        <li>Run the generalist to obtain top‑\(n\) candidate classes.</li>
+                        <li>Activate specialists whose label set overlaps those candidates.</li>
+                        <li>Fuse generalist and specialist distributions (KL‑divergence optimisation) to get the final prediction.</li>
+                      </ol>
+                    </div>
+                    <div class="col-md-6 text-center">
+                      <img src="Picture3.png"
+                           alt="Comparison of generalist and specialist models"
+                           class="img-fluid">
+                      <figcaption>Figure 4 – CIFAR‑10 Dataset.</figcaption>
+                    </div>
+                  </div>      </section>
 
       <!-- Experiments -->
       <section id="experiments" class="my-5">
-        <h2 class="section-title">Experimental Results and Analysis</h2>
-        <p>After training these three models, we distilled their ensemble knowledge into a single small network. Below are our key findings on CIFAR‑10:</p>
+        <h2 class="section-title">Experimental Results and Analysis</h2>
+        <p>We trained the three networks on CIFAR‑10 and distilled their ensemble knowledge into a single student (ResNet‑18). Key findings:</p>
 
-        <h3>Per‐Class Accuracy Improvement</h3>
+        <h3>Per‑Class Accuracy Improvement</h3>
         <table class="table table-striped">
           <thead>
-            <tr>
-              <th>Class</th>
-              <th>Generalist (%)</th>
-              <th>Ensemble w/ Specialists (%)</th>
-              <th>Δ (%)</th>
-            </tr>
+            <tr><th>Class</th><th>Generalist (%)</th><th>Ensemble w/ Specialists (%)</th><th>Δ (%)</th></tr>
           </thead>
           <tbody>
             <tr><td>plane</td><td>83.30</td><td>82.00</td><td>−1.30</td></tr>
@@ -118,57 +138,89 @@
 
         <h3>Overall Performance</h3>
         <table class="table table-striped">
-          <thead>
-            <tr>
-              <th>Model</th>
-              <th>Accuracy (%)</th>
-            </tr>
-          </thead>
+          <thead><tr><th>Model</th><th>Accuracy (%)</th></tr></thead>
           <tbody>
-            <tr><td>Generalist (ResNet-34)</td><td>81.30</td></tr>
-            <tr><td>Specialist 1 (Animals, ResNet-18)</td><td>82.37</td></tr>
-            <tr><td>Specialist 2 (Vehicles, ResNet-18)</td><td>91.35</td></tr>
-            <tr><td><strong>Distilled Ensemble</strong></td><td><strong>83.49</strong></td></tr>
+            <tr><td>Generalist (ResNet‑34)</td><td>81.30</td></tr>
+            <tr><td>Specialist 1 (Animals, ResNet‑18)</td><td>82.37</td></tr>
+            <tr><td>Specialist 2 (Vehicles, ResNet‑18)</td><td>91.35</td></tr>
+            <tr><td><strong>Distilled Ensemble</strong></td><td><strong>83.49</strong></td></tr>
           </tbody>
         </table>
       </section>
 
-      <!-- Discussion & Conclusion -->
-      <section id="discussion" class="my-5">
-        <h2 class="section-title">Why Does Distillation Work?</h2>
-        <p>By training on <em>soft targets</em>—the full output distribution at a raised softmax temperature—the small model inherits the large model’s generalization patterns. It learns which mistakes are more “reasonable,” and this extra signal greatly reduces overfitting compared to hard‐label training alone.</p>
+      <!-- Math Deep‑Dive -->
+      <section id="math" class="my-5">
+        <h2 class="section-title">Math Deep‑Dive: How Knowledge Distillation Works</h2>
 
-        <h2 class="section-title">Insights & Future Work</h2>
+        <h3>1  Soft‑max with Temperature</h3>
+        <p>The teacher converts logits \(z\) into probabilities by</p>
+        <p class="equation">$$
+          q_i(T)=\frac{\exp\!\bigl(z_i/T\bigr)}{\displaystyle\sum_j \exp\!\bigl(z_j/T\bigr)},\quad T\ge1.
+        $$</p>
+
+        <h3>2  Student Loss Function</h3>
+        <p>We blend soft and hard targets:</p>
+        <p class="equation">$$
+          \mathcal{L}= \lambda\,T^{2}\,\operatorname{CE}\bigl(q(T),p(T)\bigr)
+          +\bigl(1-\lambda\bigr)\,\operatorname{CE}\bigl(y,p(1)\bigr).
+        $$</p>
+        <p>Here \(p\) is the student distribution, \(y\) the one‑hot label, and \(\lambda\in[0,1]\).</p>
+
+        <h3>3  Gradient ≈ Logit Matching</h3>
+        <p>With \(\lambda=1\):</p>
+        <p class="equation">$$
+          \frac{\partial \mathcal{L}}{\partial z_i}
+          =\frac{1}{T}\,\bigl(p_i(T)-q_i(T)\bigr).
+        $$</p>
+        <p>At high \(T\) this becomes an ℓ² regression on logits, making “matching logits” a special case.</p>
+
+        <h3>4  Fusing Specialist &amp; Generalist Outputs</h3>
+        <p>With generalist \(p^{\mathrm g}\) and active specialists \(p^{(m)}\):</p>
+        <p class="equation">$$
+          q^\*=\arg\min_q\Bigl[\operatorname{KL}\!\bigl(p^{\mathrm g},q\bigr)+\!\!\sum_{m\in\mathcal{A}_k}\!\operatorname{KL}\!\bigl(p^{(m)},q\bigr)\Bigr].
+        $$</p>
+
+        <h3>5  Practical Tips</h3>
         <ul>
-          <li>Our specialist–generalist ensemble boosts per‐class accuracy, especially on confusing animal classes.</li>
-          <li>Future directions include experimenting with different specialist subsets, tuning distillation temperatures, and scaling to larger datasets like ImageNet.</li>
+          <li>Search \(T\in[4,10]\); increase if student capacity is much smaller.</li>
+          <li>Set \(\lambda\approx0.8\) so soft targets dominate.</li>
+          <li>Use a higher learning rate—soft targets smooth the loss surface.</li>
+        </ul>
+      </section>
+
+      <!-- Discussion / Conclusion -->
+      <section id="discussion" class="my-5">
+        <h2 class="section-title">Why Does Distillation Work?</h2>
+        <p>Soft targets capture the teacher’s uncertainty and similarity structure. They tell the student which mistakes are “reasonable” (cat ↔ dog) and which are implausible (cat ↔ truck). That additional information acts as a powerful form of regularisation, dramatically reducing over‑fitting—especially when the student network has far fewer parameters.</p>
+
+        <h2 class="section-title">Insights & Future Work</h2>
+        <ul>
+          <li>Specialist models deliver the biggest boost on historically confusing classes (animals).</li>
+          <li>Exploring finer‑grained specialist clusters or hierarchical specialists could yield further gains.</li>
+          <li>Temperature search and automated \(\lambda\) scheduling remain fertile ground for research.</li>
+          <li>Applying the same pipeline to larger datasets (e.g., ImageNet) is an exciting next step.</li>
         </ul>
 
         <h2 class="section-title">Conclusion</h2>
-        <p>Combining specialist models with distillation yields a compact, high‐accuracy network suitable for deployment in resource‐constrained environments—bridging the gap between research‐grade ensembles and real‐world applications.</p>
+        <p>Specialist‑generalist ensembles push accuracy beyond a lone model, but serving many networks online is impractical. Model distillation resolves that tension: our compact, distilled ResNet‑18 inherits almost all the ensemble’s performance while meeting real‑time constraints—a compelling blueprint for high‑accuracy, low‑latency computer‑vision systems.</p>
       </section>
 
       <!-- References -->
       <section id="references" class="my-5">
         <h2 class="section-title">References</h2>
-        <ul class="list-unstyled">
-          <li>
-            [1] <a href="https://arxiv.org/abs/1503.02531" target="_blank" rel="noopener noreferrer">
-              Geoffrey Hinton <em>et al.</em>, “Distilling the Knowledge in a Neural Network,” arXiv:1503.02531 (2015)
-            </a>
-          </li>
+        <ul class="list-unstyled mb-0">
+          <li>[1] <a href="https://arxiv.org/abs/1503.02531" target="_blank" rel="noopener noreferrer">G. Hinton <em>et al.</em>, “Distilling the Knowledge in a Neural Network,” arXiv 1503.02531 (2015)</a></li>
         </ul>
       </section>
-      
 
-      <!-- Team & Code -->
+      <!-- Team -->
       <section id="team" class="my-5">
-        <h2 class="section-title">Team & Code</h2>
-        <p><strong>Authors:</strong> Rohan Bhatane, Ayaazuddin Mohammad</p>
-        <p><strong>GitHub:</strong> <a href="https://github.com/ayaazuddin/Model-Distillation" target="_blank">github.com/ayaazuddin/Model-Distillation</a></p>
+        <h2 class="section-title">Team & Code</h2>
+        <p><strong>Authors:</strong> Rohan Bhatane, Ayaazuddin Mohammad</p>
+        <p><strong>GitHub:</strong> <a href="https://github.com/dummy_link" target="_blank">github.com/dummy_link</a></p>
       </section>
 
-    </div>
+    </div><!-- /.container -->
   </main>
 
   <!-- FOOTER -->
@@ -178,24 +230,12 @@
     </div>
   </footer>
 
-  <!-- SCRIPTS -->
+  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
           integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
           crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
           integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
           crossorigin="anonymous"></script>
-  <script>
-    // click-to-select helper
-    $(document).on('click', '.clickselect', function() {
-      var range = document.createRange();
-      range.selectNodeContents(this);
-      var sel = window.getSelection();
-      sel.removeAllRanges();
-      sel.addRange(range);
-    });
-    // Google Analytics placeholder
-    window.dataLayer = window.dataLayer || [];
-  </script>
 </body>
 </html>
