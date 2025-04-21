@@ -70,6 +70,8 @@
         <p>Recent advancements in neural networks have dramatically increased the performance of image‑classification systems. However, deploying large models in real‑world applications remains challenging due to tight latency and memory budgets. Geoffrey Hinton and his colleagues proposed <strong>model distillation</strong>, a method that transfers the knowledge of a large or ensemble model into a much smaller network with minimal loss in accuracy. In this article we explore how distillation works and how combining <em>specialist</em> and <em>generalist</em> models further boosts accuracy on the CIFAR‑10 dataset.</p>
       </section>
 
+      
+
       <!-- Distillation -->
       <section id="distillation" class="my-5">
         <h2 class="section-title">What is Model Distillation?</h2>
@@ -83,69 +85,11 @@
              </figure>
       </section>
 
-      <!-- Ensemble Strategy -->
-      <section id="ensemble" class="my-5">
-        <h2 class="section-title">Generalist and Specialist Models</h2>
-                <div class="row align-items-center">
-                    <div class="col-md-6">
-                      <p>Ensembles squeeze out extra accuracy. Ours contains:</p>
-                      <ul>
-                        <li><strong>Generalist Model</strong> — ResNet‑34 trained on all 10 CIFAR‑10 classes.</li>
-                        <li><strong>Specialist Models</strong> — Two ResNet‑18 networks, each fine‑tuned on a subset:</li>
-                        <ul>
-                          <li><em>Animals:</em> bird, cat, deer, dog, frog, horse</li>
-                          <li><em>Vehicles:</em> plane, car, ship, truck</li>
-                        </ul>
-                      </ul>
-                      <p>At inference time the pipeline is:</p>
-                      <ol>
-                        <li>Run the generalist to obtain top‑\(n\) candidate classes.</li>
-                        <li>Activate specialists whose label set overlaps those candidates.</li>
-                        <li>Fuse generalist and specialist distributions (KL‑divergence optimisation) to get the final prediction.</li>
-                      </ol>
-                    </div>
-                    <div class="col-md-6 text-center">
-                      <img src="Picture3.png"
-                           alt="Comparison of generalist and specialist models"
-                           class="img-fluid">
-                      <figcaption>Figure 4 – CIFAR‑10 Dataset.</figcaption>
-                    </div>
-                  </div>      </section>
-
-      <!-- Experiments -->
-      <section id="experiments" class="my-5">
-        <h2 class="section-title">Experimental Results and Analysis</h2>
-        <p>We trained the three networks on CIFAR‑10 and distilled their ensemble knowledge into a single student (ResNet‑18). Key findings:</p>
-
-        <h3>Per‑Class Accuracy Improvement</h3>
-        <table class="table table-striped">
-          <thead>
-            <tr><th>Class</th><th>Generalist (%)</th><th>Ensemble w/ Specialists (%)</th><th>Δ (%)</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>plane</td><td>83.30</td><td>82.00</td><td>−1.30</td></tr>
-            <tr><td>car</td><td>91.30</td><td>90.50</td><td>−0.80</td></tr>
-            <tr><td>bird</td><td>72.60</td><td>76.10</td><td>+3.50</td></tr>
-            <tr><td>cat</td><td>64.80</td><td>67.40</td><td>+2.60</td></tr>
-            <tr><td>deer</td><td>79.50</td><td>83.40</td><td>+3.90</td></tr>
-            <tr><td>dog</td><td>72.70</td><td>77.20</td><td>+4.50</td></tr>
-            <tr><td>frog</td><td>85.50</td><td>89.50</td><td>+4.00</td></tr>
-            <tr><td>horse</td><td>85.90</td><td>88.00</td><td>+2.10</td></tr>
-            <tr><td>ship</td><td>89.50</td><td>91.80</td><td>+2.30</td></tr>
-            <tr><td>truck</td><td>87.90</td><td>89.00</td><td>+1.10</td></tr>
-          </tbody>
-        </table>
-
-        <h3>Overall Performance</h3>
-        <table class="table table-striped">
-          <thead><tr><th>Model</th><th>Accuracy (%)</th></tr></thead>
-          <tbody>
-            <tr><td>Generalist (ResNet‑34)</td><td>81.30</td></tr>
-            <tr><td>Specialist 1 (Animals, ResNet‑18)</td><td>82.37</td></tr>
-            <tr><td>Specialist 2 (Vehicles, ResNet‑18)</td><td>91.35</td></tr>
-            <tr><td><strong>Distilled Ensemble</strong></td><td><strong>83.49</strong></td></tr>
-          </tbody>
-        </table>
+      <!-- Related Work -->
+      <section id="related-work" class="my-5">
+        <h2 class="section-title">Related Work</h2>
+        <p>This project builds directly upon the seminal work by Hinton, Vinyals, and Dean (2015) in their paper <a href="https://arxiv.org/abs/1503.02531" target="_blank" rel="noopener noreferrer">"Distilling the Knowledge in a Neural Network."</a> In their breakthrough research, they introduced the concept of knowledge distillation as a model compression technique, demonstrating that the "dark knowledge" captured in soft probability distributions from teacher models contains valuable information beyond hard class labels.</p>
+        <p>While Hinton et al. primarily focused on distilling knowledge from large ensembles into a single network using a uniform softmax temperature, our work extends their approach by implementing a specialized ensemble structure with domain-specific expert models. We particularly focus on their specialist-generalist ensemble concept, where they introduced "a new type of ensemble composed of one or more full models and many specialist models which learn to distinguish fine-grained classes." Our implementation adapts this approach for the CIFAR-10 dataset with semantic grouping of specialists (animals vs. vehicles), demonstrating significant accuracy improvements while maintaining deployment efficiency through distillation.</p>
       </section>
 
       <!-- Math Deep‑Dive -->
@@ -188,22 +132,107 @@
         </ul>
       </section>
 
-      <!-- Discussion / Conclusion -->
-      <section id="discussion" class="my-5">
-        <h2 class="section-title">Why Does Distillation Work?</h2>
-        <p>Soft targets capture the teacher’s uncertainty and similarity structure. They tell the student which mistakes are “reasonable” (cat ↔ dog) and which are implausible (cat ↔ truck). That additional information acts as a powerful form of regularisation, dramatically reducing over‑fitting—especially when the student network has far fewer parameters.</p>
+      <!-- Ensemble Strategy -->
+      <section id="ensemble" class="my-5">
+        <h2 class="section-title">Generalist and Specialist Models</h2>
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                      <p>Ensembles squeeze out extra accuracy. Ours contains:</p>
+                      <ul>
+                        <li><strong>Generalist Model</strong> — ResNet‑34 trained on all 10 CIFAR‑10 classes.</li>
+                        <li><strong>Specialist Models</strong> — Two ResNet‑18 networks, each fine‑tuned on a subset:</li>
+                        <ul>
+                          <li><em>Animals:</em> bird, cat, deer, dog, frog, horse</li>
+                          <li><em>Vehicles:</em> plane, car, ship, truck</li>
+                        </ul>
+                      </ul>
+                      
+                      <h3>How Specialist-Generalist Ensembles Work</h3>
+                      <p>Unlike traditional mixtures of experts where all models are consulted for every input, our approach uses a more efficient two-stage process:</p>
+                      
+                      <ol>
+                        <li><strong>Training Phase:</strong></li>
+                        <ul>
+                          <li>The generalist model is trained on the complete dataset first</li>
+                          <li>We analyze the confusion matrix to identify commonly confused class groups</li>
+                          <li>Specialist models are then trained specifically on these challenging subsets</li>
+                          <li>Specialists develop expertise in distinguishing between visually similar classes (e.g., different animal species)</li>
+                        </ul>
+                        
+                        <li><strong>Inference Phase:</strong></li>
+                        <ul>
+                          <li>Run the generalist to obtain top‑\(n\) candidate classes.</li>
+                          <li>Activate specialists whose label set overlaps those candidates.</li>
+                          <li>Fuse generalist and specialist distributions (KL‑divergence optimisation) to get the final prediction.</li>
+                        </ul>
+                      </ol>
+                      
+                      <p>This approach is computationally efficient because specialists are only activated when needed. For example, if the generalist confidently predicts "car" with high probability, only the vehicle specialist might be consulted, leaving the animal specialist dormant. This selective activation significantly reduces the computational overhead compared to always using all models.</p>
+                    </div>
+                    <div class="col-md-6 text-center">
+                      <img src="Picture3.png"
+                           alt="Comparison of generalist and specialist models"
+                           class="img-fluid">
+                      <figcaption>Figure 4 – CIFAR‑10 Dataset.</figcaption>
+                    </div>
+                  </div> </section>
 
-        <h2 class="section-title">Insights & Future Work</h2>
-        <ul>
-          <li>Specialist models deliver the biggest boost on historically confusing classes (animals).</li>
-          <li>Exploring finer‑grained specialist clusters or hierarchical specialists could yield further gains.</li>
-          <li>Temperature search and automated \(\lambda\) scheduling remain fertile ground for research.</li>
-          <li>Applying the same pipeline to larger datasets (e.g., ImageNet) is an exciting next step.</li>
-        </ul>
+      <!-- Experiments -->
+      <section id="experiments" class="my-5">
+        <h2 class="section-title">Experimental Results and Analysis</h2>
+        <p>We trained the three networks on CIFAR‑10 and distilled their ensemble knowledge into a single student (ResNet‑18). Key findings:</p>
 
-        <h2 class="section-title">Conclusion</h2>
-        <p>Specialist‑generalist ensembles push accuracy beyond a lone model, but serving many networks online is impractical. Model distillation resolves that tension: our compact, distilled ResNet‑18 inherits almost all the ensemble’s performance while meeting real‑time constraints—a compelling blueprint for high‑accuracy, low‑latency computer‑vision systems.</p>
+        <h3>Per‑Class Accuracy Improvement</h3>
+        <table class="table table-striped">
+          <thead>
+            <tr><th>Class</th><th>Generalist (%)</th><th>Ensemble w/ Specialists (%)</th><th>Δ (%)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>plane</td><td>83.30</td><td>82.00</td><td>−1.30</td></tr>
+            <tr><td>car</td><td>91.30</td><td>90.50</td><td>−0.80</td></tr>
+            <tr><td>bird</td><td>72.60</td><td>76.10</td><td>+3.50</td></tr>
+            <tr><td>cat</td><td>64.80</td><td>67.40</td><td>+2.60</td></tr>
+            <tr><td>deer</td><td>79.50</td><td>83.40</td><td>+3.90</td></tr>
+            <tr><td>dog</td><td>72.70</td><td>77.20</td><td>+4.50</td></tr>
+            <tr><td>frog</td><td>85.50</td><td>89.50</td><td>+4.00</td></tr>
+            <tr><td>horse</td><td>85.90</td><td>88.00</td><td>+2.10</td></tr>
+            <tr><td>ship</td><td>89.50</td><td>91.80</td><td>+2.30</td></tr>
+            <tr><td>truck</td><td>87.90</td><td>89.00</td><td>+1.10</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Overall Performance</h3>
+        <table class="table table-striped">
+          <thead><tr><th>Model</th><th>Accuracy (%)</th></tr></thead>
+          <tbody>
+            <tr><td>Generalist (ResNet‑34)</td><td>81.30</td></tr>
+            <tr><td>Specialist 1 (Animals, ResNet‑18)</td><td>82.37</td></tr>
+            <tr><td>Specialist 2 (Vehicles, ResNet‑18)</td><td>91.35</td></tr>
+            <tr><td><strong>Distilled Ensemble</strong></td><td><strong>83.49</strong></td></tr>
+          </tbody>
+        </table>
       </section>
+
+      
+
+      
+<!-- Discussion / Conclusion -->
+<section id="discussion" class="my-5">
+  <h2 class="section-title">Discussion</h2>
+  
+  <p>This study investigated the effectiveness of model distillation in transferring knowledge from a specialist–generalist ensemble to a compact student network for image classification on the CIFAR-10 dataset. The primary objective was to determine whether the accuracy benefits of ensemble methods, particularly those leveraging specialist models, could be retained in a single deployable model through distillation, thereby addressing the practical constraints of model size and inference latency.</p>
+  
+  <p>The results indicate that distilling the ensemble into a student model (ResNet-18) yields a notable improvement in overall accuracy compared to a generalist model alone. Specifically, the distilled student achieved an accuracy of 83.49%, surpassing the generalist ResNet-34 baseline (81.30%) and closely matching the ensemble's performance. Per-class analysis revealed that the most pronounced gains were observed in animal classes, with improvements of up to 4.5 percentage points for classes such as "dog" and "deer." These findings suggest that specialist models, when focused on semantically similar or historically confused classes, are particularly effective at capturing fine-grained distinctions that generalist models may overlook.</p>
+  
+  <p>The observed performance gains can be attributed to the use of soft targets during distillation. Soft targets encode the teacher model's uncertainty and the relationships between classes, providing the student with richer supervisory signals than hard labels alone. This aligns with previous literature, which has shown that distillation acts as a regularizer and enables smaller models to generalize better by leveraging the "dark knowledge" present in the teacher's output probabilities.</p>
+  
+  <p>Despite these improvements, the study also identified certain limitations. Not all classes benefited equally from the specialist–generalist approach; some vehicle classes experienced marginal declines in accuracy. This suggests that the current grouping of specialists may not fully capture the underlying structure of class confusion within the dataset. Future research could explore automated or data-driven methods for specialist assignment, potentially leveraging clustering techniques based on confusion matrices or learned feature representations.</p>
+  
+  <p>Another area for further investigation involves the selection and scheduling of distillation hyperparameters, such as the softmax temperature and the blending coefficient \(\lambda\). The current approach relies on static values, but adaptive or dynamic strategies may yield additional performance gains. Moreover, while the study demonstrated the effectiveness of the approach on CIFAR-10, extending this methodology to larger and more complex datasets, such as ImageNet, remains an open challenge.</p>
+  
+  <!-- <p>In summary, this work demonstrates that model distillation can effectively compress the knowledge of a specialist–generalist ensemble into a single, efficient model, achieving high accuracy while meeting the practical requirements of real-world deployment. The results highlight the potential of combining ensemble learning and distillation for scalable and efficient deep learning systems, while also identifying promising directions for future research, including more sophisticated specialist structures and adaptive distillation techniques.</p> -->
+</section>
+      
 
       <!-- References -->
       <section id="references" class="my-5">
@@ -217,10 +246,12 @@
       <section id="team" class="my-5">
         <h2 class="section-title">Team & Code</h2>
         <p><strong>Authors:</strong> Rohan Bhatane, Ayaazuddin Mohammad</p>
-        <p><strong>GitHub:</strong> <a href="https://github.com/dummy_link" target="_blank">github.com/dummy_link</a></p>
+        <p><strong>GitHub:</strong> <a href="https://github.com/ayaazuddin/Model-Distillation" target="_blank">github.com/ayaazuddin/Model-Distillation</a></p>
       </section>
 
     </div><!-- /.container -->
+
+
   </main>
 
   <!-- FOOTER -->
